@@ -371,6 +371,14 @@ def normalize_pay(job1: Job, job2: Job) -> float:
     return sigmoid(x=(-0.75 * var), scale_factor=2)
 
 
+def normalize_descriptions(job1: Job, job2: Job) -> float:
+    """
+    Returns a normalized similarity value based on the number
+    of common words in <job1> and <job2> descriptions.
+    """
+    return 0.0
+
+
 def similarity_calculation(job1: Job, job2: Job) -> float:
     """
     This function is used to calculate the similarity score between two jobs.
@@ -423,3 +431,4 @@ if __name__ == "__main__":
     # )
 
     graph = load_job_graph()
+    print(len(graph._vertices))
