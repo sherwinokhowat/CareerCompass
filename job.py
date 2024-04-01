@@ -1,6 +1,22 @@
+"""
+CSC111 Winter 2024: Internship Finder
+
+DESCRIPTION OF MODULE HERE.
+
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of students
+taking CSC111 at the University of Toronto St. George campus. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited. For more information on copyright for CSC111 materials,
+please consult our Course Syllabus.
+
+This file is Copyright (c) 2024 Sherwin Okhowat
+"""
+
 from __future__ import annotations
 from typing import Any, Optional
-import math
+from math import e, acos, sin, cos, pi
 import csv
 
 
@@ -17,6 +33,7 @@ class Job:
     - 'rating' in self.job_details
     - 'link' in self.job_details
     - 'fragmented_desc' in self.job_details
+    - 'full_desc' in self.job_details
     - 'skills' in self.job_details
     - 'latitutde' in self.job_details
     - 'longitude' in self.job_details
@@ -25,9 +42,11 @@ class Job:
     - 'pay_period' in self.job_details
     - 'pay' in self.job_details
     - 'job_id' in self.job_details
+    - 'image_url' in self.job_details
     """
 
-    job_details: dict
+    job_details: dict[str, Any]
+    remote: bool
 
     def __init__(self, job_details: dict[str, Any]) -> None:
         """
@@ -39,6 +58,7 @@ class Job:
         - 'rating' in job_details
         - 'link' in job_details
         - 'fragmented_desc' in job_details
+        - 'full_desc' in job_details
         - 'skills' in job_details
         - 'latitutde' in job_details
         - 'longitude' in job_details
@@ -47,8 +67,10 @@ class Job:
         - 'pay_period' in self.job_details
         - 'pay' in self.job_details
         - 'job_id' in job_details
+        - 'image_url' in job_details
         """
         self.job_details = job_details
+        self.remote = self._check_remote()
 
     def __str__(self) -> str:
         """
@@ -56,43 +78,18 @@ class Job:
         """
         return self.job_details["job_id"]
 
-
-def load_csv() -> None:
-    jobs = []
-    with open("jobs.csv", "r", newline="") as csvfile:
-        job_reader = csv.reader(csvfile)
-        next(job_reader)
-        for row in job_reader:
-            job_details = {
-                "job_title": row[0],
-                "employer_name": row[1],
-                "rating": float(row[2]),
-                "link": row[3],
-                "fragmented_desc": row[4],
-                "skills": row[5],
-                "latitutde": float(row[6]),
-                "longitude": float(row[7]),
-                "city": row[8],
-                "country": row[9],
-                "pay_period": row[10],
-                "pay": float(row[11]),
-                "job_id": row[12],
-            }
-            jobs.append(Job(job_details))
-
-    g = WeightedGraph()
-    for job in jobs:
-        g.add_vertex(job)
-
-    print("a")
-    for job1 in jobs:
-        for job2 in jobs:
-            if job1 != job2:
-                g.add_edge(job1, job2)
-    print("Done")
-    print(str(len(g._vertices)) + ",\n")
-    print(str(len(g._vertices[jobs[876]].neighbours)) + ",\n")
-    print(len(jobs))
+    def _check_remote(self) -> bool:
+        """
+        Returns whether this Job instance is remote.
+        """
+        if "remote" in str.lower(self.job_details["job_title"]):
+            return True
+        elif "remote" in str.lower(self.job_details["fragmented_desc"]):
+            return True
+        elif "remote" in str.lower(self.job_details["full_desc"]):
+            return True
+        else:
+            return False
 
 
 class _WeightedVertex:
@@ -123,6 +120,11 @@ class _WeightedVertex:
         Returns the similarity score (i.e., the weight) of <self> and <other>.
         """
         return similarity_calculation(self.item, other.item)
+
+
+# ====================================================================================
+# Weighted Graph
+# ====================================================================================
 
 
 class WeightedGraph:
@@ -165,14 +167,113 @@ class WeightedGraph:
         """
         Returns the similarity score between job1 and job2.
         """
-        return self._vertices.get([job1].neighbours[self._vertices[job2]], 0)
+        return self._vertices.get(
+            self._vertices[job1].neighbours[self._vertices[job2]], 0
+        )
+
+    def get_similar_jobs(self, job: Job, limit: Optional[int] = 5) -> list[Job]:
+        """
+        Returns the <limit> jobs with the highest similarity score to <job>.
+        """
+        if job not in self._vertices:
+            raise ValueError("Job does not exist in this <WeightedGraph> instance!")
+
+        job_vertex = self._vertices[job]
+        sorted_jobs = sorted(
+            job_vertex.neighbours.items(), key=lambda item: item[1], reverse=True
+        )
+
+        return [neighbour_vertex.item for neighbour_vertex, _ in sorted_jobs[:limit]]
+
+    def get_vertices(self) -> dict[Job, _WeightedVertex]:
+        """
+        Returns self._vertices.
+        """
+        return self._vertices
+
+
+# ====================================================================================
+# Load CSV
+# ====================================================================================
+
+
+def load_jobs_csv() -> list[Job]:
+    """
+    Returns a list of Job instances representing every job in <jobs.csv>.
+
+    Note that duplicates are filtered out!
+    """
+    ids = set()
+    jobs = []
+    with open("jobs.csv", "r", newline="") as csvfile:
+        job_reader = csv.reader(csvfile)
+        next(job_reader)
+        for row in job_reader:
+            try:
+                job_details = {
+                    "job_title": row[0],
+                    "employer_name": row[1],
+                    "rating": float(row[2]),
+                    "link": row[3],
+                    "fragmented_desc": row[4],
+                    "full_desc": row[5],
+                    "skills": row[6],
+                    "latitutde": float(row[7]),
+                    "longitude": float(row[8]),
+                    "city": row[9],
+                    "country": row[10],
+                    "pay_period": row[11],
+                    "pay": float(row[12]),
+                    "job_id": row[13],
+                    "image_url": row[14],
+                }
+                if job_details["job_id"] not in ids:
+                    jobs.append(Job(job_details))
+                    ids.add(job_details["job_id"])
+            except ValueError:
+                continue
+    return jobs
+
+
+def load_job_graph() -> WeightedGraph:
+    """
+    Returns a <WeightedGraph> of every job stored in <jobs.csv>.
+    """
+    g = WeightedGraph()
+    jobs = load_jobs_csv()
+
+    for job in jobs:
+        g.add_vertex(job)
+
+    for job1 in jobs:  # no optimization available :(
+        for job2 in jobs:
+            if job1 != job2:
+                g.add_edge(job1, job2)
+
+    return g
+
+
+# ====================================================================================
+# Computation
+# ====================================================================================
+
+
+def sigmoid(x: float, scale_factor: Optional[int] = 1) -> float:
+    """
+    Returns the value of f(x) = scale_factor/(1 + e^(-x)).
+    """
+    try:
+        return scale_factor / (1 + e ** (-x))
+    except ValueError:
+        print(x)
+        return 0
 
 
 def deg_to_rad(degrees: float) -> float:
     """
     Converts <degrees> into radians and returns it.
     """
-    return degrees * (math.pi / 180.0)
+    return degrees * (pi / 180.0)
 
 
 def calculate_distance(
@@ -183,7 +284,8 @@ def calculate_distance(
     an approximated veresion of the harversine formula.
 
     Note that although this is an approximation, it takes into account the Earth's spherical shape.
-    You can learn more about the harvesine formula used here: https://en.wikipedia.org/wiki/Haversine_formula.
+    You can learn more about the harvesine formula used here:
+    https://en.wikipedia.org/wiki/Haversine_formula.
 
     Preconditions:
     - coords1[0] and coords1[1] are the latitude and longitude of the coordinate respectively.
@@ -191,18 +293,11 @@ def calculate_distance(
     """
     lat1, lng1 = deg_to_rad(coords1[0]), deg_to_rad(coords1[1])
     lat2, lng2 = deg_to_rad(coords2[0]), deg_to_rad(coords2[1])
-    # distance = (
-    #     math.acos(
-    #         (math.sin(lat1) * math.sin(lat2))
-    #         + (math.cos(lat1) * math.cos(lat2) * math.cos(lng2 - lng1))
-    #     )
-    #     * 6371
-    # )
-    cosine_angular_distance = (math.sin(lat1) * math.sin(lat2)) + (
-        math.cos(lat1) * math.cos(lat2) * math.cos(lng2 - lng1)
+    cosine_angular_distance = (sin(lat1) * sin(lat2)) + (
+        cos(lat1) * cos(lat2) * cos(lng2 - lng1)
     )
     clamped_value = max(min(cosine_angular_distance, 1), -1)
-    distance = math.acos(clamped_value) * 6371
+    distance = acos(clamped_value) * 6371
     return distance
 
 
@@ -226,17 +321,6 @@ def normalize_distance(job1: Job, job2: Job) -> float:
     coords2 = (job2.job_details["latitutde"], job2.job_details["longitude"])
     distance = calculate_distance(coords1, coords2)
     return sigmoid(x=(-2 * distance / 1000.0), scale_factor=2)
-
-
-def sigmoid(x: float, scale_factor: Optional[int] = 1) -> float:
-    """
-    Returns the value of f(x) = scale_factor/(1 + e^(-x)).
-    """
-    try:
-        return scale_factor / (1 + math.e ** (-x))
-    except:
-        print(x)
-        return 0
 
 
 def normalize_country(job1: Job, job2: Job) -> float:
@@ -289,8 +373,9 @@ def normalize_pay(job1: Job, job2: Job) -> float:
 
 def similarity_calculation(job1: Job, job2: Job) -> float:
     """
-    This function is used to calculate the similarity score between two jobs. The similarity score is
-    calculated based on a number of metrics. These metrics include:
+    This function is used to calculate the similarity score between two jobs.
+    The similarity score is calculated based on a number of metrics.
+    These metrics include:
     - Their distance from each other COMPLETE
     - Rating COMPLETE
     - Country COMPLETE
@@ -319,4 +404,22 @@ def similarity_calculation(job1: Job, job2: Job) -> float:
     return similarity
 
 
-load_csv()
+# ====================================================================================
+# Main Function
+# ====================================================================================
+
+if __name__ == "__main__":
+    import python_ta
+
+    # Need to read documentation to modify !
+    # python_ta.check_all(
+    #     config={
+    #         "max-line-length": 100,
+    #         "disable": ["E1136"],
+    #         "extra-imports": ["csv", "networkx"],
+    #         "allowed-io": ["load_review_graph"],
+    #         "max-nested-blocks": 4,
+    #     }
+    # )
+
+    graph = load_job_graph()

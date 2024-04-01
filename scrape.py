@@ -84,17 +84,17 @@ async def fetch_job_details(session: aiohttp.ClientSession, job_id: int) -> dict
     associated with <job_id>. The relevant portion of the response is returned, which is a
     dictionary filled with detailed information related to the job.
     """
-    async with aiohttp.ClientSession() as session:
-        job_query = f'[{{"operationName":"JobDetailQuery","variables":{{"enableReviewSummary":true,"jl":{job_id},"queryString":"pos=103&ao=1136043&s=58&guid=0000018e8d41a5119fabc43362077072&src=GD_JOB_AD&t=SR&vt=w&ea=1&cs=1_0b675c31&cb=1711766873784&jobListingId=1009198443079&jrtk=5-yul1-0-1hq6k39a8hdh9802-1de3e23b19ddcb90","pageTypeEnum":"SERP"}},"query":"query JobDetailQuery($jl: Long!, $queryString: String, $enableReviewSummary: Boolean!, $pageTypeEnum: PageTypeEnum) {{\\n  jobview: jobView(\\n    listingId: $jl\\n    contextHolder: {{queryString: $queryString, pageTypeEnum: $pageTypeEnum}}\\n  ) {{\\n    ...DetailFragment\\n    employerReviewSummary @include(if: $enableReviewSummary) {{\\n      reviewSummary {{\\n        highlightSummary {{\\n          sentiment\\n          sentence\\n          categoryReviewCount\\n          __typename\\n        }}\\n        __typename\\n      }}\\n      __typename\\n    }}\\n    __typename\\n  }}\\n}}\\n\\nfragment DetailFragment on JobView {{\\n  employerBenefits {{\\n    benefitsOverview {{\\n      benefitsHighlights {{\\n        benefit {{\\n          commentCount\\n          icon\\n          name\\n          __typename\\n        }}\\n        highlightPhrase\\n        __typename\\n      }}\\n      overallBenefitRating\\n      employerBenefitSummary {{\\n        comment\\n        __typename\\n      }}\\n      __typename\\n    }}\\n    benefitReviews {{\\n      benefitComments {{\\n        id\\n        comment\\n        __typename\\n      }}\\n      cityName\\n      createDate\\n      currentJob\\n      rating\\n      stateName\\n      userEnteredJobTitle\\n      __typename\\n    }}\\n    numReviews\\n    __typename\\n  }}\\n  employerContent {{\\n    featuredVideoLink\\n    managedContent {{\\n      id\\n      type\\n      title\\n      body\\n      captions\\n      photos\\n      videos\\n      __typename\\n    }}\\n    diversityContent {{\\n      goals {{\\n        id\\n        workPopulation\\n        underRepresentedGroup\\n        currentMetrics\\n        currentMetricsDate\\n        representationGoalMetrics\\n        representationGoalMetricsDate\\n        __typename\\n      }}\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  employerAttributes {{\\n    attributes {{\\n      attributeName\\n      attributeValue\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  gaTrackerData {{\\n    jobViewDisplayTimeMillis\\n    requiresTracking\\n    pageRequestGuid\\n    searchTypeCode\\n    trackingUrl\\n    __typename\\n  }}\\n  header {{\\n    jobLink\\n    adOrderId\\n    advertiserType\\n    ageInDays\\n    applicationId\\n    appliedDate\\n    applyUrl\\n    applyButtonDisabled\\n    blur\\n    coverPhoto {{\\n      url\\n      __typename\\n    }}\\n    divisionEmployerName\\n    easyApply\\n    easyApplyMethod\\n    employerNameFromSearch\\n    employer {{\\n      activeStatus\\n      bestProfile {{\\n        id\\n        __typename\\n      }}\\n      id\\n      name\\n      shortName\\n      size\\n      squareLogoUrl\\n      __typename\\n    }}\\n    expired\\n    goc\\n    hideCEOInfo\\n    indeedApplyMetadata\\n    indeedJobAttribute {{\\n      education\\n      skills\\n      educationLabel\\n      skillsLabel\\n      yearsOfExperienceLabel\\n      __typename\\n    }}\\n    isIndexableJobViewPage\\n    isSponsoredJob\\n    isSponsoredEmployer\\n    jobTitleText\\n    jobType\\n    jobTypeKeys\\n    jobCountryId\\n    jobResultTrackingKey\\n    locId\\n    locationName\\n    locationType\\n    needsCommission\\n    normalizedJobTitle\\n    organic\\n    payCurrency\\n    payPeriod\\n    payPeriodAdjustedPay {{\\n      p10\\n      p50\\n      p90\\n      __typename\\n    }}\\n    rating\\n    remoteWorkTypes\\n    salarySource\\n    savedJobId\\n    seoJobLink\\n    serpUrlForJobListing\\n    sgocId\\n    categoryMgocId\\n    urgencySignal {{\\n      labelKey\\n      messageKey\\n      normalizedCount\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  similarJobs {{\\n    relatedJobTitle\\n    careerUrl\\n    __typename\\n  }}\\n  job {{\\n    description\\n    discoverDate\\n    eolHashCode\\n    importConfigId\\n    jobReqId\\n    jobSource\\n    jobTitleId\\n    jobTitleText\\n    listingId\\n    __typename\\n  }}\\n  jobListingAdminDetails {{\\n    adOrderId\\n    cpcVal\\n    importConfigId\\n    jobListingId\\n    jobSourceId\\n    userEligibleForAdminJobDetails\\n    __typename\\n  }}\\n  map {{\\n    address\\n    cityName\\n    country\\n    employer {{\\n      id\\n      name\\n      __typename\\n    }}\\n    lat\\n    lng\\n    locationName\\n    postalCode\\n    stateName\\n    __typename\\n  }}\\n  overview {{\\n    ceo {{\\n      name\\n      photoUrl\\n      __typename\\n    }}\\n    id\\n    name\\n    shortName\\n    squareLogoUrl\\n    headquarters\\n    links {{\\n      overviewUrl\\n      benefitsUrl\\n      photosUrl\\n      reviewsUrl\\n      salariesUrl\\n      __typename\\n    }}\\n    primaryIndustry {{\\n      industryId\\n      industryName\\n      sectorName\\n      sectorId\\n      __typename\\n    }}\\n    ratings {{\\n      overallRating\\n      ceoRating\\n      ceoRatingsCount\\n      recommendToFriendRating\\n      compensationAndBenefitsRating\\n      cultureAndValuesRating\\n      careerOpportunitiesRating\\n      seniorManagementRating\\n      workLifeBalanceRating\\n      __typename\\n    }}\\n    revenue\\n    size\\n    sizeCategory\\n    type\\n    website\\n    yearFounded\\n    __typename\\n  }}\\n  photos {{\\n    photos {{\\n      caption\\n      photoId\\n      photoId2x\\n      photoLink\\n      photoUrl\\n      photoUrl2x\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  reviews {{\\n    reviews {{\\n      advice\\n      cons\\n      countHelpful\\n      employerResponses {{\\n        response\\n        responseDateTime\\n        userJobTitle\\n        __typename\\n      }}\\n      employmentStatus\\n      featured\\n      isCurrentJob\\n      jobTitle {{\\n        text\\n        __typename\\n      }}\\n      lengthOfEmployment\\n      pros\\n      ratingBusinessOutlook\\n      ratingCareerOpportunities\\n      ratingCeo\\n      ratingCompensationAndBenefits\\n      ratingCultureAndValues\\n      ratingOverall\\n      ratingRecommendToFriend\\n      ratingSeniorLeadership\\n      ratingWorkLifeBalance\\n      reviewDateTime\\n      reviewId\\n      summary\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  __typename\\n}}\\n"}}]'
-        async with session.post(
-            url, headers=headers, data=job_query, ssl=False
-        ) as response:
-            if response:
-                data = await response.json(content_type=None)
-                return data[0]["data"]["jobview"]
-            else:
-                print(response.status_code)
-                return {}
+    # async with aiohttp.ClientSession() as session:
+    job_query = f'[{{"operationName":"JobDetailQuery","variables":{{"enableReviewSummary":true,"jl":{job_id},"queryString":"pos=103&ao=1136043&s=58&guid=0000018e8d41a5119fabc43362077072&src=GD_JOB_AD&t=SR&vt=w&ea=1&cs=1_0b675c31&cb=1711766873784&jobListingId=1009198443079&jrtk=5-yul1-0-1hq6k39a8hdh9802-1de3e23b19ddcb90","pageTypeEnum":"SERP"}},"query":"query JobDetailQuery($jl: Long!, $queryString: String, $enableReviewSummary: Boolean!, $pageTypeEnum: PageTypeEnum) {{\\n  jobview: jobView(\\n    listingId: $jl\\n    contextHolder: {{queryString: $queryString, pageTypeEnum: $pageTypeEnum}}\\n  ) {{\\n    ...DetailFragment\\n    employerReviewSummary @include(if: $enableReviewSummary) {{\\n      reviewSummary {{\\n        highlightSummary {{\\n          sentiment\\n          sentence\\n          categoryReviewCount\\n          __typename\\n        }}\\n        __typename\\n      }}\\n      __typename\\n    }}\\n    __typename\\n  }}\\n}}\\n\\nfragment DetailFragment on JobView {{\\n  employerBenefits {{\\n    benefitsOverview {{\\n      benefitsHighlights {{\\n        benefit {{\\n          commentCount\\n          icon\\n          name\\n          __typename\\n        }}\\n        highlightPhrase\\n        __typename\\n      }}\\n      overallBenefitRating\\n      employerBenefitSummary {{\\n        comment\\n        __typename\\n      }}\\n      __typename\\n    }}\\n    benefitReviews {{\\n      benefitComments {{\\n        id\\n        comment\\n        __typename\\n      }}\\n      cityName\\n      createDate\\n      currentJob\\n      rating\\n      stateName\\n      userEnteredJobTitle\\n      __typename\\n    }}\\n    numReviews\\n    __typename\\n  }}\\n  employerContent {{\\n    featuredVideoLink\\n    managedContent {{\\n      id\\n      type\\n      title\\n      body\\n      captions\\n      photos\\n      videos\\n      __typename\\n    }}\\n    diversityContent {{\\n      goals {{\\n        id\\n        workPopulation\\n        underRepresentedGroup\\n        currentMetrics\\n        currentMetricsDate\\n        representationGoalMetrics\\n        representationGoalMetricsDate\\n        __typename\\n      }}\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  employerAttributes {{\\n    attributes {{\\n      attributeName\\n      attributeValue\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  gaTrackerData {{\\n    jobViewDisplayTimeMillis\\n    requiresTracking\\n    pageRequestGuid\\n    searchTypeCode\\n    trackingUrl\\n    __typename\\n  }}\\n  header {{\\n    jobLink\\n    adOrderId\\n    advertiserType\\n    ageInDays\\n    applicationId\\n    appliedDate\\n    applyUrl\\n    applyButtonDisabled\\n    blur\\n    coverPhoto {{\\n      url\\n      __typename\\n    }}\\n    divisionEmployerName\\n    easyApply\\n    easyApplyMethod\\n    employerNameFromSearch\\n    employer {{\\n      activeStatus\\n      bestProfile {{\\n        id\\n        __typename\\n      }}\\n      id\\n      name\\n      shortName\\n      size\\n      squareLogoUrl\\n      __typename\\n    }}\\n    expired\\n    goc\\n    hideCEOInfo\\n    indeedApplyMetadata\\n    indeedJobAttribute {{\\n      education\\n      skills\\n      educationLabel\\n      skillsLabel\\n      yearsOfExperienceLabel\\n      __typename\\n    }}\\n    isIndexableJobViewPage\\n    isSponsoredJob\\n    isSponsoredEmployer\\n    jobTitleText\\n    jobType\\n    jobTypeKeys\\n    jobCountryId\\n    jobResultTrackingKey\\n    locId\\n    locationName\\n    locationType\\n    needsCommission\\n    normalizedJobTitle\\n    organic\\n    payCurrency\\n    payPeriod\\n    payPeriodAdjustedPay {{\\n      p10\\n      p50\\n      p90\\n      __typename\\n    }}\\n    rating\\n    remoteWorkTypes\\n    salarySource\\n    savedJobId\\n    seoJobLink\\n    serpUrlForJobListing\\n    sgocId\\n    categoryMgocId\\n    urgencySignal {{\\n      labelKey\\n      messageKey\\n      normalizedCount\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  similarJobs {{\\n    relatedJobTitle\\n    careerUrl\\n    __typename\\n  }}\\n  job {{\\n    description\\n    discoverDate\\n    eolHashCode\\n    importConfigId\\n    jobReqId\\n    jobSource\\n    jobTitleId\\n    jobTitleText\\n    listingId\\n    __typename\\n  }}\\n  jobListingAdminDetails {{\\n    adOrderId\\n    cpcVal\\n    importConfigId\\n    jobListingId\\n    jobSourceId\\n    userEligibleForAdminJobDetails\\n    __typename\\n  }}\\n  map {{\\n    address\\n    cityName\\n    country\\n    employer {{\\n      id\\n      name\\n      __typename\\n    }}\\n    lat\\n    lng\\n    locationName\\n    postalCode\\n    stateName\\n    __typename\\n  }}\\n  overview {{\\n    ceo {{\\n      name\\n      photoUrl\\n      __typename\\n    }}\\n    id\\n    name\\n    shortName\\n    squareLogoUrl\\n    headquarters\\n    links {{\\n      overviewUrl\\n      benefitsUrl\\n      photosUrl\\n      reviewsUrl\\n      salariesUrl\\n      __typename\\n    }}\\n    primaryIndustry {{\\n      industryId\\n      industryName\\n      sectorName\\n      sectorId\\n      __typename\\n    }}\\n    ratings {{\\n      overallRating\\n      ceoRating\\n      ceoRatingsCount\\n      recommendToFriendRating\\n      compensationAndBenefitsRating\\n      cultureAndValuesRating\\n      careerOpportunitiesRating\\n      seniorManagementRating\\n      workLifeBalanceRating\\n      __typename\\n    }}\\n    revenue\\n    size\\n    sizeCategory\\n    type\\n    website\\n    yearFounded\\n    __typename\\n  }}\\n  photos {{\\n    photos {{\\n      caption\\n      photoId\\n      photoId2x\\n      photoLink\\n      photoUrl\\n      photoUrl2x\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  reviews {{\\n    reviews {{\\n      advice\\n      cons\\n      countHelpful\\n      employerResponses {{\\n        response\\n        responseDateTime\\n        userJobTitle\\n        __typename\\n      }}\\n      employmentStatus\\n      featured\\n      isCurrentJob\\n      jobTitle {{\\n        text\\n        __typename\\n      }}\\n      lengthOfEmployment\\n      pros\\n      ratingBusinessOutlook\\n      ratingCareerOpportunities\\n      ratingCeo\\n      ratingCompensationAndBenefits\\n      ratingCultureAndValues\\n      ratingOverall\\n      ratingRecommendToFriend\\n      ratingSeniorLeadership\\n      ratingWorkLifeBalance\\n      reviewDateTime\\n      reviewId\\n      summary\\n      __typename\\n    }}\\n    __typename\\n  }}\\n  __typename\\n}}\\n"}}]'
+    async with session.post(
+        url, headers=headers, data=job_query, ssl=False
+    ) as response:
+        if response:
+            data = await response.json(content_type=None)
+            return data[0]["data"]["jobview"]
+        else:
+            print(response.status_code)
+            return {}
 
 
 async def process_job_listings(jobs: list) -> None:  # this goes to scrape file
@@ -116,13 +116,25 @@ async def process_job_listings(jobs: list) -> None:  # this goes to scrape file
 
         for i in range(len(jobs)):
             job = jobs[i]
+            job_specifics = responses[i]
+            if not job_specifics:
+                continue
 
             job_title = job["jobview"]["header"]["jobTitleText"]
             employer_name = job["jobview"]["header"]["employerNameFromSearch"]
-            rating = job["jobview"]["header"]["rating"]
             link = job["jobview"]["header"]["seoJobLink"]
             fragmented_desc = job["jobview"]["job"]["descriptionFragments"]
             job_id = job["jobview"]["jobListingAdminDetails"]["jobListingId"]
+            rating = job["jobview"]["header"]["rating"]
+            skills = job_specifics["header"]["indeedJobAttribute"]["skillsLabel"]
+            city = job_specifics["map"]["cityName"]
+            country = job_specifics["map"]["country"]
+            latitutde = job_specifics["map"]["lat"]
+            longitude = job_specifics["map"]["lng"]
+            full_desc = job_specifics["job"]["description"]
+
+            if not rating:
+                rating = "0"
 
             if job["jobview"]["header"]["payPeriod"] is not None:
                 pay_period = job["jobview"]["header"]["payPeriod"]
@@ -131,17 +143,17 @@ async def process_job_listings(jobs: list) -> None:  # this goes to scrape file
                 pay = 40000
                 pay_period = "ANNUAL"
 
-            # job_specifics = get_job_details(int(job_id))
-            job_specifics = responses[i]
-            if job_specifics == {}:
+            if latitutde is None or not latitutde:
                 continue
-            skills = job_specifics["header"]["indeedJobAttribute"][
-                "skillsLabel"
-            ]  # note that this is a list
-            latitutde = job_specifics["map"]["lat"]
-            longitude = job_specifics["map"]["lng"]
-            city = job_specifics["map"]["cityName"]
-            country = job_specifics["map"]["country"]
+            if longitude is None or not longitude:
+                continue
+            if not country:
+                country = "United States"
+
+            if job_specifics["overview"]["squareLogoUrl"] is not None:
+                image_url = job_specifics["overview"]["squareLogoUrl"]
+            else:
+                image_url = "empty"
 
             job_details = [
                 job_title,
@@ -149,6 +161,7 @@ async def process_job_listings(jobs: list) -> None:  # this goes to scrape file
                 rating,
                 link,
                 fragmented_desc,
+                full_desc,
                 skills,
                 latitutde,
                 longitude,
@@ -157,8 +170,22 @@ async def process_job_listings(jobs: list) -> None:  # this goes to scrape file
                 pay_period,
                 pay,
                 job_id,
+                image_url,
             ]
+            sanitize_details(job_details)
             write_csv("jobs.csv", job_details)
+
+
+def sanitize_details(job_details: list[Any]) -> None:
+    """
+    Sanitizes <job_details> into the appropriate UTF-8 format.
+    """
+    for i in range(len(job_details)):
+        field = job_details[i]
+        if isinstance(field, str):
+            job_details[i] = (
+                field.replace("\u2010", "-").replace("\n", " ").replace("\r", " ")
+            )
 
 
 # ----------------------------- CSV Functions Begin -----------------------------
@@ -172,7 +199,7 @@ def write_csv(file: str, job_details: list) -> None:
     Preconditions:
     - file is a csv file
     """
-    with open(file, "a", newline="") as csvfile:
+    with open(file, "a", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(job_details)
 
@@ -187,6 +214,7 @@ def clear_csv(file: str) -> None:
         "rating",
         "link",
         "fragmented_desc",
+        "full-desc",
         "skills",
         "latitutde",
         "longitude",
@@ -195,6 +223,7 @@ def clear_csv(file: str) -> None:
         "pay_period",
         "pay",
         "job_id",
+        "image_url",
     ]
     with open(file, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
