@@ -1,6 +1,5 @@
 from typing import Optional, Any
 from job import Job
-from structures import WeightedGraph, DecisionTree
 from math import e, acos, sin, cos, pi
 import csv
 
@@ -204,26 +203,6 @@ def load_jobs_csv() -> list[Job]:
             except ValueError:
                 continue
     return jobs
-
-
-def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
-    """
-    Returns a <WeightedGraph> of every job stored in <jobs.csv>.
-    """
-    g = WeightedGraph()
-    jobs = load_jobs_csv()
-    new_tree = DecisionTree(None, [])
-
-    for job in jobs:
-        g.add_vertex(job)
-        new_tree.insert_job(job.decisions + [job])
-
-    for job1 in jobs:  # no optimization available :(
-        for job2 in jobs:
-            if job1 != job2:
-                g.add_edge(job1, job2)
-
-    return g, new_tree
 
 
 # ====================================================================================
