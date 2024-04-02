@@ -194,6 +194,7 @@ class DecisionTree:
                 list_of_vertices = []
                 for subtree in self._subtrees:
                     list_of_vertices += subtree._traverse_path(inputs[1:])
+                return list_of_vertices
             else:
                 for subtree in self._subtrees:
                     if subtree._root == inputs[0]:
