@@ -3,6 +3,7 @@ from typing import Optional
 from utility import similarity_calculation, load_jobs_csv
 from job import Job
 
+
 # ====================================================================================
 # Weighted Graph
 # ====================================================================================
@@ -121,8 +122,8 @@ class DecisionTree:
     """
 
     _root: set[Job]
-    _left: Optional[DecisionTree]
-    _right: Optional[DecisionTree]
+    _left: Optional[DecisionTree] = None
+    _right: Optional[DecisionTree] = None
 
     def __init__(self) -> None:
         self._root = set()
@@ -142,15 +143,29 @@ class DecisionTree:
         else:
             curr = decisions[0]
             if curr == 0:
-                if not self._left:
+                if self._left is None:
                     self._left = DecisionTree()
                 self._left.insert(job, depth + 1)
             else:  # curr == 1
-                if not self._right:
+                if self._right is None:
                     self._right = DecisionTree()
                 self._right.insert(job, depth + 1)
 
     def get_jobs(self, decisions: list[int]) -> set[Job]:
+        """
+        Returns the set of jobs in the tree corresponding to
+        the path given by <decisions>. If not enough jobs
+        correspond to the path, it randomly adjusts decisions
+        until there are enough paths.
+        """
+        for i in range(len(decisions)):
+            j = self.get_jobs_helper(decisions.copy())
+            if len(j) >= 5:
+                return j
+            decisions[i] = 2
+        return self.get_jobs_helper(decisions.copy())
+
+    def get_jobs_helper(self, decisions: list[int]) -> set[Job]:
         """
         Returns the set of jobs in the tree corresponding to
         the path given by <decisions>.
@@ -160,12 +175,16 @@ class DecisionTree:
         else:
             curr = decisions.pop(0)
             if curr == 0:
+                if self._left is None:
+                    return set()
                 return self._left.get_jobs(decisions)
             elif curr == 1:
+                if self._right is None:
+                    return set()
                 return self._right.get_jobs(decisions)
             else:  # 2 => traverse both
-                left = self._left.get_jobs(decisions)
-                right = self._right.get_jobs(decisions)
+                left = self._left.get_jobs(decisions) if self._left is not None else set()
+                right = self._right.get_jobs(decisions) if self._right is not None else set()
                 return set.union(left, right)
 
 
@@ -175,11 +194,11 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
     """
     g = WeightedGraph()
     jobs = load_jobs_csv()
-    new_tree = DecisionTree(None, [])
+    new_tree = DecisionTree()
 
     for job in jobs:
         g.add_vertex(job)
-        new_tree.insert_job(job.decisions + [job])
+        new_tree.insert(job)
 
     for job1 in jobs:  # no optimization available :(
         for job2 in jobs:
@@ -187,3 +206,10 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
                 g.add_edge(job1, job2)
 
     return g, new_tree
+
+
+g, tree = load_graph_and_tree()
+
+jobs = tree.get_jobs([0, 2, 2, 2, 2, 2, 2])
+for job in jobs:
+    print(job.job_details['country'])

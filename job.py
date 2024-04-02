@@ -1,5 +1,6 @@
 from typing import Any
 from random import randint
+from re import sub
 
 
 class Job:
@@ -54,6 +55,7 @@ class Job:
         """
         self.job_details = job_details
         self.decisions = self._get_decision_bools()
+        self._sanitize_description()
 
     def __str__(self) -> str:
         """
@@ -98,7 +100,16 @@ class Job:
         elif self._check_keyword("full stack"):
             return True
 
-    def _get_decision_bools(self) -> list[bool]:
+    def _sanitize_description(self) -> None:
+        """
+        Sanitizes self.job_details['fragmented_desc'], by removing
+        all html tags using regular expression query.
+        """
+        desc = self.job_details['fragmented_desc']
+        clean_desc = sub('<[^<]+?>', '', desc)
+        self.job_details['fragmented_desc'] = clean_desc
+
+    def _get_decision_bools(self) -> list[int]:
         """
         Canada, United States, or Don't Care? DONE
         Remote, Not Remote, or Don't Care? DONE

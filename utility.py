@@ -175,7 +175,7 @@ def load_jobs_csv() -> list[Job]:
     """
     ids = set()
     jobs = []
-    with open("jobs.csv", "r", newline="", encoding="utf-8") as csvfile:
+    with open("jobs.csv", "r", newline="", encoding='utf-8') as csvfile:
         job_reader = csv.reader(csvfile)
         next(job_reader)
         for row in job_reader:
@@ -244,7 +244,7 @@ def clear_csv(file: str) -> None:
         "job_id",
         "image_url",
     ]
-    with open(file, "w", newline="", encoding="utf-8") as csvfile:
+    with open(file, "w", newline="", encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(column_names)
 
