@@ -120,7 +120,7 @@ class DecisionTree:
         - all(not subtree.is_empty() for subtree in self._subtrees)
     """
 
-    _root: int | Job
+    _root: Optional[int | Job]
     _subtrees: list[DecisionTree]
 
     def __init__(self, root: int | Job, subtrees: list[DecisionTree]) -> None:
@@ -138,7 +138,7 @@ class DecisionTree:
         >>> t1 = DecisionTree(None, [])
         >>> t1.is_empty()
         True
-        >>> t2 = DecisionTree(3, [])
+        >>> t2 = DecisionTree(2, [])
         >>> t2.is_empty()
         False
         """
@@ -184,6 +184,9 @@ class DecisionTree:
 
         Note: The first step of traversal is after the _root of the tree. Since with animal decision trees
         the first node is only a placeholder.
+
+        Preconditions:
+        - all([i in {0, 1, 2} for i in inputs])
         """
         if self.is_empty():
             return []

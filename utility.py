@@ -212,11 +212,11 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
     """
     g = WeightedGraph()
     jobs = load_jobs_csv()
-    new_tree = DecisionTree(-1, [])
+    new_tree = DecisionTree(None, [])
 
     for job in jobs:
         g.add_vertex(job)
-        new_tree.insert_sequence(job.decisions + [job])
+        new_tree.insert_job(job.decisions + [job])
 
     for job1 in jobs:  # no optimization available :(
         for job2 in jobs:
