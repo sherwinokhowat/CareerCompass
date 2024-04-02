@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional
-from utility import similarity_calculation
+from utility import similarity_calculation, load_jobs_csv
 from job import Job
 
 # ====================================================================================
@@ -167,3 +167,23 @@ class DecisionTree:
                 left = self._left.get_jobs(decisions)
                 right = self._right.get_jobs(decisions)
                 return set.union(left, right)
+
+
+def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
+    """
+    Returns a <WeightedGraph> of every job stored in <jobs.csv>.
+    """
+    g = WeightedGraph()
+    jobs = load_jobs_csv()
+    new_tree = DecisionTree(None, [])
+
+    for job in jobs:
+        g.add_vertex(job)
+        new_tree.insert_job(job.decisions + [job])
+
+    for job1 in jobs:  # no optimization available :(
+        for job2 in jobs:
+            if job1 != job2:
+                g.add_edge(job1, job2)
+
+    return g, new_tree
