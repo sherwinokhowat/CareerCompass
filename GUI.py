@@ -8,9 +8,10 @@ This file is Copyright (c) 2024 Kush Gandhi
 
 from pathlib import Path
 import tkinter as tk
+import structures
+from job import Job
 from tkinter import ttk, messagebox
 from PIL import ImageTk, Image
-from utility import load_graph_and_tree
 
 # Get File Directory
 folder = Path(__file__).absolute().parent
@@ -42,7 +43,7 @@ class CareerCompass:
 
     user_name: str | None
     preferences: dict[str, str]
-    job_postings: list
+    job_postings: list[Job]
 
     def __init__(self, root):
         """
@@ -503,6 +504,24 @@ class PreferencesPage(ttk.Frame):
 
         # Update the preferences
         if self.update_preferences():
+
+            # Converting the preferences to the correct format
+            for key in self.app.preferences:
+                if self.app.preferences[key] == "yes":
+                    self.app.preferences[key] = 0
+                elif self.app.preferences[key] == "no":
+                    self.app.preferences[key] = 1
+                else:
+                    self.app.preferences[key] = 2
+
+            # Generating Decision Tree and Graph
+            graph, tree = structures.load_graph_and_tree()
+
+            # Getting the job postings
+            self.app.job_postings = tree._traverse_path(
+                list(self.app.preferences.items())
+            )[:5]
+
             self.app.show_pages("JobsPage")
 
     def update_preferences(self) -> bool:
@@ -535,8 +554,6 @@ class JobsPage(ttk.Frame):
     Class for the Jobs Page
     # TODO
     """
-
-    job_postings = []
 
     def __init__(self, container_jobs, app):
         super().__init__(container_jobs)
@@ -648,7 +665,7 @@ class JobsPage(ttk.Frame):
                 376.0,
                 initial_y - 31,
                 anchor="nw",
-                text=f"JOB TITLE @ COMPANY NAME",
+                text=f"{self.app.job_postings[i].job_details['job_title']}",
                 fill="#FFFFFF",
                 font=("Karma Bold", 20 * -1),
             )
@@ -656,7 +673,7 @@ class JobsPage(ttk.Frame):
                 376.0,
                 initial_y - 9,
                 anchor="nw",
-                text=f"$999999",
+                text=f" ",
                 fill="#0E355D",
                 font=("Karma Bold", 16 * -1),
             )
@@ -672,7 +689,7 @@ class JobsPage(ttk.Frame):
                 376.0,
                 initial_y + 12,
                 anchor="nw",
-                text=f"Lorem ipsum dolor sit amet, consectet",
+                text=f"Lorem ipsum dolor sit amet, consecrate",
                 fill="#FFFFFF",
                 font=("Karma Light", 14 * -1),
             )

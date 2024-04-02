@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional
-from utility import similarity_calculation, load_jobs_csv
+from utility import similarity_calculation
 from job import Job
 
 # ====================================================================================
@@ -120,108 +120,50 @@ class DecisionTree:
         - all(not subtree.is_empty() for subtree in self._subtrees)
     """
 
-    _root: Optional[int | Job]
-    _subtrees: list[DecisionTree]
+    _root: set[Job]
+    _left: Optional[DecisionTree]
+    _right: Optional[DecisionTree]
 
-    def __init__(self, root: int | Job, subtrees: list[DecisionTree]) -> None:
-        """Initialize a new Tree with the given root value and subtrees.
+    def __init__(self) -> None:
+        self._root = set()
+
+    def insert(self, job: Job, depth: int = 0) -> None:
+        """
+        Inserts <job> into the decision tree based on <decisions>
 
         Preconditions:
-            - root is not none or subtrees == []
+        - all([i in {0, 1} for i in job.decisions])
         """
-        self._root = root
-        self._subtrees = subtrees
-
-    def is_empty(self) -> bool:
-        """Return whether this tree is empty.
-
-        >>> t1 = DecisionTree(None, [])
-        >>> t1.is_empty()
-        True
-        >>> t2 = DecisionTree(2, [])
-        >>> t2.is_empty()
-        False
-        """
-        return self._root is None
-
-    def insert_job(self, items: list[int | Job]) -> None:
-        """
-        [1,0,1,1,1,1,0, Jobinstance]
-        """
-        if not self._subtrees and items:  # tree is a single value
-            self._subtrees.append(DecisionTree(items.pop(0), []))
-            self._subtrees[0].insert_job(items)
-        elif items:  # tree has at least one subtree
-            found = False
-            for subtree in self._subtrees:
-                if not found and subtree._root == items[0]:
-                    found = True
-                    subtree.insert_job(items[1:])
-
-            if not found:
-                self._subtrees.append(DecisionTree(items.pop(0), []))
-                self._subtrees[-1].insert_job(items)
-
-    def get_jobs_by_answer(self, answers: list[int]) -> set[Job]:
-        """
-        This function returns the list of jobs according ot the information given by the questionaire
-        and returns a set of Job instances determined when reading the file.
-
-        The index is the value at which we look for a number equal to or greater than it.
-        """
-        list_so_far = []
-        roots = self._traverse_path(answers)
-        for root in roots:
-            for job_id_vertex in root._subtrees:
-                list_so_far.append(job_id_vertex._root)
-
-        return set(list_so_far)
-
-    def _traverse_path(self, inputs: list[int]) -> list[DecisionTree]:
-        """
-        returns the node right after traversing the inputs. That is, when going down each node, each root
-        must equal to the correct index of the inputs.
-
-        Note: The first step of traversal is after the _root of the tree. Since with animal decision trees
-        the first node is only a placeholder.
-
-        Preconditions:
-        - all([i in {0, 1, 2} for i in inputs])
-        """
-        if self.is_empty():
-            return []
-        elif not self._subtrees:  # tree is a single value
-            return []
-        elif inputs:  # tree has at least one subtree
-            if inputs[0] == 2:
-                list_of_vertices = []
-                for subtree in self._subtrees:
-                    list_of_vertices += subtree._traverse_path(inputs[1:])
-                return list_of_vertices
-            else:
-                for subtree in self._subtrees:
-                    if subtree._root == inputs[0]:
-                        return subtree._traverse_path(inputs[1:])
-                return [DecisionTree(None, [])]
+        decisions = job.decisions
+        if len(decisions) == depth:
+            if self._root is None:
+                self._root = set()
+            self._root.add(job)
         else:
-            return [self]
+            curr = decisions[0]
+            if curr == 0:
+                if not self._left:
+                    self._left = DecisionTree()
+                self._left.insert(job, depth + 1)
+            else:  # curr == 1
+                if not self._right:
+                    self._right = DecisionTree()
+                self._right.insert(job, depth + 1)
 
-
-def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
-    """
-    Returns a <WeightedGraph> of every job stored in <jobs.csv>.
-    """
-    g = WeightedGraph()
-    jobs = load_jobs_csv()
-    new_tree = DecisionTree(None, [])
-
-    for job in jobs:
-        g.add_vertex(job)
-        new_tree.insert_job(job.decisions + [job])
-
-    for job1 in jobs:  # no optimization available :(
-        for job2 in jobs:
-            if job1 != job2:
-                g.add_edge(job1, job2)
-
-    return g, new_tree
+    def get_jobs(self, decisions: list[int]) -> set[Job]:
+        """
+        Returns the set of jobs in the tree corresponding to
+        the path given by <decisions>.
+        """
+        if not decisions:
+            return self._root
+        else:
+            curr = decisions.pop(0)
+            if curr == 0:
+                return self._left.get_jobs(decisions)
+            elif curr == 1:
+                return self._right.get_jobs(decisions)
+            else:  # 2 => traverse both
+                left = self._left.get_jobs(decisions)
+                right = self._right.get_jobs(decisions)
+                return set.union(left, right)

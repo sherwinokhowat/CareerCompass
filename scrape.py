@@ -269,3 +269,7 @@ def fetch_jobs_ca(cursor: str) -> dict[Any]:
     else:
         print(response.status_code)
         return {}
+
+
+scrape_us_jobs()
+scrape_ca_jobs()
