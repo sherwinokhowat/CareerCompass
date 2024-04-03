@@ -13,7 +13,7 @@ All forms of distribution of this code, whether as given or with any changes, ar
 expressly prohibited. For more information on copyright of these files,
 please contact us through Github using the "contact" button within our application.
 
-This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+This file is Copyright (c) 2024 Sherwin Okhowat, Kush Gandhi, David Cen, Tony Qi.
 """
 
 from __future__ import annotations
@@ -161,7 +161,7 @@ def scrape_us_jobs(ids: set[int]) -> None:
     NOTE: This function will continue scraping jobs until there are no more pagination cursors
     left (i.e., no more pages of job postings)!
     """
-    clear_csv("jobs.csv")
+    clear_csv()
     cursor = "AB4AAIEAAAAAAAAAAAAAAAAAAiR3vUAAAwAAAQAA"  # initial us cursor
 
     page_number = 1
@@ -318,6 +318,10 @@ if __name__ == "__main__":
     # 3. C0301 (Line-Too-Long): Necessary to query Glassdoor's GraphQL.
     # 4. R0914 (Too-Many-Locals): Necessary to save all data we scraped and to do it in one function
     #                             for easier readability and cleanliness.
+
+    # Uncomment the following line to run the scraper. Note: PythonTA must be disabled prior
+    # to running it, due to incompatibility with asyncronuous functions.
+    # scrape()
     python_ta.check_all(
         config={
             "max-line-length": 120,

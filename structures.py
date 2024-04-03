@@ -12,7 +12,7 @@ All forms of distribution of this code, whether as given or with any changes, ar
 expressly prohibited. For more information on copyright of these files,
 please contact us through Github using the "contact" button within our application.
 
-This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+This file is Copyright (c) 2024 Sherwin Okhowat, Kush Gandhi, David Cen, Tony Qi.
 """
 
 from __future__ import annotations
@@ -64,6 +64,9 @@ class WeightedGraph:
 
     Private Instance Attributes:
     - _vertices: The Job vertices in this graph.
+
+    Representation Invariants:
+    - all(job == self._vertices[job].job for job in self._vertices)
     """
 
     _vertices: dict[Job, _WeightedVertex]
@@ -167,6 +170,11 @@ class DecisionTree:
     Representation Invariants:
         - self._root is not None or self._subtrees == []
         - all(not subtree.is_empty() for subtree in self._subtrees)
+
+    Private Instance Attributes:
+    - _root: The set of jobs stored at this DecisionTree's root
+    - _left: The left subtree of this DecisionTree
+    - _right: The right subtree of this DecisionTree
     """
 
     _root: set[Job]
@@ -174,11 +182,14 @@ class DecisionTree:
     _right: Optional[DecisionTree] = None
 
     def __init__(self) -> None:
+        """
+        Initialize a DecisionTree instance.
+        """
         self._root = set()
 
     def insert(self, job: Job, depth: int = 0) -> None:
         """
-        Inserts <job> into the decision tree based on <decisions>
+        Inserts <job> into the decision tree based on <job.decisions>.
 
         Preconditions:
         - all([i in {0, 1} for i in job.decisions])
@@ -246,7 +257,7 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
     """
     Returns a <WeightedGraph> of every job stored in <jobs.csv>.
 
-    Note that inherently, constructing a complete graph is O(n^2).
+    NOTE: Inherently, constructing a complete graph is O(n^2).
     """
     g = WeightedGraph()
     jobs = load_jobs_csv()
@@ -267,7 +278,9 @@ if __name__ == "__main__":
     import python_ta
 
     # NOTES FOR PYTHON-TA:
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'extra-imports': ["typing", "random", "utility", "job"]
-    })
+    python_ta.check_all(
+        config={
+            "max-line-length": 120,
+            "extra-imports": ["typing", "random", "utility", "job"],
+        }
+    )

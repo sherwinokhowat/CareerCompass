@@ -13,8 +13,9 @@ All forms of distribution of this code, whether as given or with any changes, ar
 expressly prohibited. For more information on copyright of these files,
 please contact us through Github using the "contact" button within our application.
 
-This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+This file is Copyright (c) 2024 Sherwin Okhowat, Kush Gandhi, David Cen, Tony Qi.
 """
+
 from typing import Optional, Any
 from math import e, acos, sin, cos, pi
 import csv
@@ -184,20 +185,6 @@ def load_jobs_csv() -> set[Job]:
     return jobs
 
 
-# def load_keywords() -> set[str]:
-#     """
-#     Returns a set of keywords typically found in software jobs.
-#     """
-#     keywords = set()
-#     with open("keywords.txt", "r", newline="") as file:
-#         for line in file:
-#             line = line.strip().lower()
-#             if line:
-#                 keywords.add(line)
-
-#     return keywords
-
-
 # ====================================================================================
 # Writing to CSV Functions
 # ====================================================================================
@@ -216,9 +203,10 @@ def write_csv(file: str, job_details: list) -> None:
         writer.writerow(job_details)
 
 
-def clear_csv(file: str) -> None:
+def clear_csv(file: str = "jobs.csv") -> None:
     """
-    Clears the csv file associted to file.
+    Clears the csv file associted to <file> and writes formatted
+    column names for a job posting csv as its first line.
     """
     column_names = [
         "job_title",
@@ -243,8 +231,9 @@ def clear_csv(file: str) -> None:
 
 def sanitize_details(job_details: list[Any]) -> None:
     """
-    Sanitizes <job_details> into an appropriate format in order
-    to encode <job_details> into a UTF-8 format writable by csv.
+    Sanitizes strings in <job_details> for UTF-8 encoding by replacing
+    Unicode hyphens with ASCII hyphens, removing new lines, and removing
+    carriage return characters.
     """
     for i in range(len(job_details)):
         field = job_details[i]
@@ -259,8 +248,10 @@ if __name__ == "__main__":
 
     # NOTES FOR PYTHON-TA:
     # 1. E9998 (Forbidden-IO-Function): Necessary for reading and writing to our CSV file
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'extra-imports': ["typing", "job", "math", "csv"],
-        'disable': ['E9998']
-    })
+    python_ta.check_all(
+        config={
+            "max-line-length": 120,
+            "extra-imports": ["typing", "job", "math", "csv"],
+            "disable": ["E9998"],
+        }
+    )

@@ -26,11 +26,13 @@ def career_compass() -> None:
     gui()
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
+    career_compass()
     import python_ta
 
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'extra-imports': ["gui"],
-    })
+    python_ta.check_all(
+        config={
+            "max-line-length": 120,
+            "extra-imports": ["gui"],
+        }
+    )
