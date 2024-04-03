@@ -107,21 +107,8 @@ def normalize_pay(job1: Job, job2: Job) -> float:
     Returns a normalized similarity value based on <job1> and <job2> pay
     similarity.
     """
-    if job1.job_details["pay_period"] == "HOURLY":
-        estimated_salary1 = 40 * 52 * job1.job_details["pay"]
-    elif job1.job_details["pay_period"] == "MONTHLY":
-        estimated_salary1 = 12 * job1.job_details["pay"]
-    else:
-        estimated_salary1 = job1.job_details["pay"]
 
-    if job2.job_details["pay_period"] == "HOURLY":
-        estimated_salary2 = 40 * 52 * job2.job_details["pay"]
-    elif job2.job_details["pay_period"] == "MONTHLY":
-        estimated_salary2 = 12 * job2.job_details["pay"]
-    else:
-        estimated_salary2 = job2.job_details["pay"]
-
-    var = abs((estimated_salary1 - estimated_salary2)) / 1000.0
+    var = abs((job1.get_annual_pay() - job2.get_annual_pay())) / 1000.0
     return sigmoid(x=(-0.75 * var), scale_factor=2)
 
 

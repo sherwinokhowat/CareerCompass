@@ -16,7 +16,6 @@ class Job:
     - 'rating' in self.job_details
     - 'link' in self.job_details
     - 'fragmented_desc' in self.job_details
-    - 'full_desc' in self.job_details
     - 'skills' in self.job_details
     - 'latitutde' in self.job_details
     - 'longitude' in self.job_details
@@ -25,8 +24,9 @@ class Job:
     - 'pay_period' in self.job_details
     - 'pay' in self.job_details
     - 'job_id' in self.job_details
-    - 'image_url' in self.job_details
+    - 'full_desc' in self.job_details
     - self.job_details['country'] in {'Canada', 'United States'}
+    - self.job_details['pay_period'] in {'ANNUAL', 'MONTHLY, 'HOURLY'}
     """
 
     job_details: dict[str, Any]
@@ -61,6 +61,22 @@ class Job:
         Returns the string representation of this job, which is simply the job id.
         """
         return self.job_details["job_id"]
+
+    def get_annual_pay(self) -> float:
+        """
+        Returns the annual pay conversion for this Job instance.
+
+        If self.job_details['pay_period'] != 'Annual', then the
+        appropriate conversions are made.
+        """
+        if self.job_details["pay_period"] == "HOURLY":
+            estimated_salary = 40 * 52 * self.job_details["pay"]
+        elif self.job_details["pay_period"] == "MONTHLY":
+            estimated_salary = 12 * self.job_details["pay"]
+        else:
+            estimated_salary = self.job_details["pay"]
+
+        return estimated_salary
 
     def _check_keyword(self, keyword: str) -> bool:
         """

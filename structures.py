@@ -107,6 +107,22 @@ class WeightedGraph:
         """
         return self._vertices
 
+    def get_average_salary(self) -> int:
+        """
+        Returns the estimated average salary of all jobs
+        stored in self._vertices.
+        """
+        total = 0.0
+        for job in self._vertices:
+            total += job.get_annual_pay()
+        return int(total / len(self))
+
+    def __len__(self) -> int:
+        """
+        Returns the length of this WeightedGraph instance.
+        """
+        return len(self._vertices)
+
 
 # ====================================================================================
 # Decision Tree
@@ -214,10 +230,3 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
                 g.add_edge(job1, job2)
 
     return g, new_tree
-
-
-g, tree = load_graph_and_tree()
-
-jobs = tree.get_jobs([0, 2, 2, 2, 2, 2, 2])
-for job in jobs:
-    print(job.job_details["country"])
