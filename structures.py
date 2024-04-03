@@ -44,6 +44,9 @@ class WeightedGraph:
     """
     Class representing a weighted graph used to represent each job posting and their similarity
     score to the other job postings.
+
+    Private Instance Attributes:
+    - _vertices: The Job vertices in this graph.
     """
 
     _vertices: dict[Job, _WeightedVertex]
@@ -231,14 +234,17 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
     g = WeightedGraph()
     jobs = load_jobs_csv()
     new_tree = DecisionTree()
-
+    print("bye")
     for job in jobs:
         g.add_vertex(job)
         new_tree.insert(job)
-
+    print("hi")
+    count = 0
     for job1 in jobs:  # no optimization available :(
+        count += 1
+        print(count)
         for job2 in jobs:
             if job1 != job2:
                 g.add_edge(job1, job2)
-
+    print("hooray")
     return g, new_tree

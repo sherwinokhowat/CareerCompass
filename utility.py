@@ -111,34 +111,17 @@ def normalize_pay(job1: Job, job2: Job) -> float:
     return sigmoid(x=(-0.75 * var), scale_factor=2)
 
 
-def normalize_descriptions(job1: Job, job2: Job) -> float:
-    """
-    Returns a normalized similarity value based on the number
-    of common words in <job1> and <job2> descriptions.
-    """
-    return 0.0
-
-
 def similarity_calculation(job1: Job, job2: Job) -> float:
     """
     This function is used to calculate the similarity score between two jobs.
     The similarity score is calculated based on a number of metrics.
-    These metrics include:
-    - Their distance from each other COMPLETE
-    - Rating COMPLETE
-    - Country COMPLETE
-    - The similarity in pay COMPLETE
-    - Skills COMPLETE
-    - Job description ? Compare how many keywords there are
-    - Etc
     """
-    weights = [0.2, 0.3, 0.1, 0.15, 0.2, 0.05]
+    weights = [0.2, 0.3, 0.1, 0.3, 0.1]
     normalized_distance = normalize_distance(job1, job2) * weights[0]
     normalized_country = normalize_country(job1, job2) * weights[1]
     normalized_rating = normalize_rating(job1, job2) * weights[2]
     normalized_skills = normalize_skills(job1, job2) * weights[3]
     normalized_pay = normalize_pay(job1, job2) * weights[4]
-    normalized_description = 0 * weights[5]  # set to 0 for testing purposes
 
     similarity = (
         normalized_distance
@@ -146,7 +129,6 @@ def similarity_calculation(job1: Job, job2: Job) -> float:
         + normalized_rating
         + normalized_skills
         + normalized_pay
-        + normalized_description
     )
 
     return similarity
@@ -189,6 +171,20 @@ def load_jobs_csv() -> set[Job]:
             except ValueError:
                 continue
     return jobs
+
+
+# def load_keywords() -> set[str]:
+#     """
+#     Returns a set of keywords typically found in software jobs.
+#     """
+#     keywords = set()
+#     with open("keywords.txt", "r", newline="") as file:
+#         for line in file:
+#             line = line.strip().lower()
+#             if line:
+#                 keywords.add(line)
+
+#     return keywords
 
 
 # ====================================================================================
