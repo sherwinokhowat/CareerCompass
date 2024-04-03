@@ -18,6 +18,7 @@ This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi
 from pathlib import Path
 import webbrowser
 import tkinter as tk
+from typing import Any
 from tkinter import ttk, messagebox
 from PIL import ImageTk, Image
 import structures
@@ -51,7 +52,7 @@ class CareerCompass:
     user_name: str | None
     preferences: list[str]
     job_postings: list[Job]
-    images: dict[str, ImageTk]
+    images: dict[str, Any]
     structs: tuple[structures.WeightedGraph, structures.DecisionTree]
     facts: dict[str, int | str]
     container: tk.Frame
@@ -123,12 +124,19 @@ class CareerCompass:
         self.structs = load_graph_and_tree()
 
         # Getting size of data set
-        self.facts = {'num_jobs': len(self.structs[0]), 'avg_salary': str(self.structs[0].get_average_salary())}
-        if len(self.facts['avg_salary']) == 5:
-            self.facts['avg_salary'] = self.facts['avg_salary'][:2] + "," + self.facts['avg_salary'][2:]
-        elif len(self.facts['avg_salary']) == 6:
-            self.facts['avg_salary'] = self.facts['avg_salary'][:3] + "," + self.facts['avg_salary'][3:]
-        self.facts['avg_salary'] = "$" + self.facts['avg_salary']
+        self.facts = {
+            "num_jobs": len(self.structs[0]),
+            "avg_salary": str(self.structs[0].get_average_salary()),
+        }
+        if len(self.facts["avg_salary"]) == 5:
+            self.facts["avg_salary"] = (
+                self.facts["avg_salary"][:2] + "," + self.facts["avg_salary"][2:]
+            )
+        elif len(self.facts["avg_salary"]) == 6:
+            self.facts["avg_salary"] = (
+                self.facts["avg_salary"][:3] + "," + self.facts["avg_salary"][3:]
+            )
+        self.facts["avg_salary"] = "$" + self.facts["avg_salary"]
 
         # Show the HomePage
         self.show_pages("HomePage")
@@ -312,7 +320,7 @@ class HomePage(ttk.Frame):
             465.0,
             470.0,
             anchor="center",
-            text=self.app.facts['num_jobs'],
+            text=self.app.facts["num_jobs"],
             fill="#FFFFFF",
             font=("Karma Bold", 64 * -1),
         )
@@ -331,7 +339,7 @@ class HomePage(ttk.Frame):
             800.0,
             470.0,
             anchor="center",
-            text=self.app.facts['avg_salary'],
+            text=self.app.facts["avg_salary"],
             fill="#FFFFFF",
             font=("Karma Bold", 64 * -1),
         )
@@ -866,8 +874,17 @@ if __name__ == "__main__":
     # 1. R0902 (too-many-instance-attributes): All the current attributes(8) are necessary and cannot be reduced
     # 2. R0914 (too-many-locals): This is due to Tkinter widgets which are all necessary
     # 3. R0915 (too-many-statements): This is also due to Tkinter widgets which need to be within the constructor
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'extra-imports': ["tkinter", "PIL", "pathlib", "webbrowser", "structures", "job"],
-        'disable': ['R0902', 'R0914', 'R0915']
-    })
+    python_ta.check_all(
+        config={
+            "max-line-length": 120,
+            "extra-imports": [
+                "tkinter",
+                "PIL",
+                "pathlib",
+                "webbrowser",
+                "structures",
+                "job",
+            ],
+            "disable": ["R0902", "R0914", "R0915"],
+        }
+    )
