@@ -42,7 +42,6 @@ class Job:
         - 'rating' in job_details
         - 'link' in job_details
         - 'fragmented_desc' in job_details
-        - 'full_desc' in job_details
         - 'skills' in job_details
         - 'latitutde' in job_details
         - 'longitude' in job_details
@@ -51,7 +50,7 @@ class Job:
         - 'pay_period' in self.job_details
         - 'pay' in self.job_details
         - 'job_id' in job_details
-        - 'image_url' in job_details
+        - 'full_desc' in job_details
         """
         self.job_details = job_details
         self.decisions = self._get_decision_bools()
@@ -105,9 +104,9 @@ class Job:
         Sanitizes self.job_details['fragmented_desc'], by removing
         all html tags using regular expression query.
         """
-        desc = self.job_details['fragmented_desc']
-        clean_desc = sub('<[^<]+?>', '', desc)
-        self.job_details['fragmented_desc'] = clean_desc
+        desc = self.job_details["fragmented_desc"]
+        clean_desc = sub("<[^<]+?>", "", desc)
+        self.job_details["fragmented_desc"] = clean_desc
 
     def _get_decision_bools(self) -> list[int]:
         """

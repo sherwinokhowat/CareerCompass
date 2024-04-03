@@ -171,11 +171,11 @@ def load_jobs_csv() -> list[Job]:
     """
     Returns a list of Job instances representing every job in <jobs.csv>.
 
-    Note that duplicates are filtered out!
+    Note that duplicates are filtered out as a precautionary measure!
     """
     ids = set()
     jobs = []
-    with open("jobs.csv", "r", newline="", encoding='utf-8') as csvfile:
+    with open("jobs.csv", "r", newline="", encoding="utf-8") as csvfile:
         job_reader = csv.reader(csvfile)
         next(job_reader)
         for row in job_reader:
@@ -186,16 +186,15 @@ def load_jobs_csv() -> list[Job]:
                     "rating": float(row[2]),
                     "link": row[3],
                     "fragmented_desc": row[4],
-                    "full_desc": row[5],
-                    "skills": row[6],
-                    "latitutde": float(row[7]),
-                    "longitude": float(row[8]),
-                    "city": row[9],
-                    "country": row[10],
-                    "pay_period": row[11],
-                    "pay": float(row[12]),
-                    "job_id": row[13],
-                    "image_url": row[14],
+                    "skills": row[5],
+                    "latitutde": float(row[6]),
+                    "longitude": float(row[7]),
+                    "city": row[8],
+                    "country": row[9],
+                    "pay_period": row[10],
+                    "pay": float(row[11]),
+                    "job_id": row[12],
+                    "full_desc": row[13],
                 }
                 if job_details["job_id"] not in ids:
                     jobs.append(Job(job_details))
@@ -233,7 +232,6 @@ def clear_csv(file: str) -> None:
         "rating",
         "link",
         "fragmented_desc",
-        "full-desc",
         "skills",
         "latitutde",
         "longitude",
@@ -242,9 +240,9 @@ def clear_csv(file: str) -> None:
         "pay_period",
         "pay",
         "job_id",
-        "image_url",
+        "full-desc",
     ]
-    with open(file, "w", newline="", encoding='utf-8') as csvfile:
+    with open(file, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(column_names)
 

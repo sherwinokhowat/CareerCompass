@@ -183,14 +183,22 @@ class DecisionTree:
                     return set()
                 return self._right.get_jobs(decisions)
             else:  # 2 => traverse both
-                left = self._left.get_jobs(decisions) if self._left is not None else set()
-                right = self._right.get_jobs(decisions) if self._right is not None else set()
+                left = (
+                    self._left.get_jobs(decisions) if self._left is not None else set()
+                )
+                right = (
+                    self._right.get_jobs(decisions)
+                    if self._right is not None
+                    else set()
+                )
                 return set.union(left, right)
 
 
 def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
     """
     Returns a <WeightedGraph> of every job stored in <jobs.csv>.
+
+    Note that inherently, constructing a complete graph is O(n^2).
     """
     g = WeightedGraph()
     jobs = load_jobs_csv()
@@ -212,4 +220,4 @@ g, tree = load_graph_and_tree()
 
 jobs = tree.get_jobs([0, 2, 2, 2, 2, 2, 2])
 for job in jobs:
-    print(job.job_details['country'])
+    print(job.job_details["country"])
