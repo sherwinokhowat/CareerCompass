@@ -41,12 +41,11 @@ class CareerCompass:
     - user_name: the name of the user
     - preferences: a dictionary containing the preferences of the user
     - job_postings: a list containing the job postings
-
-    Representation Invariants:
-    - user_name.length() <= 9
-    - preferences.length() == 7
-    - job_postings.length() <= 5
-
+    - images: a dict containing the images needed for the GUI
+    - structs: a tuple containing both the decision tree and weighted graph
+    - facts: a dict mapping a string to a int or string for the facts on the home page
+    - container: a tk.Frame object needed to for the functionality of the GUI
+    - pages: a dictionary mapping the page name to an instance of that class
     """
 
     user_name: str | None
@@ -179,6 +178,7 @@ class HomePage(ttk.Frame):
 
     Instance Attributes:
     - app: Instance of CareerCompass class representing the application
+    - name_entry: A tkinter widget for user input
 
     """
 
@@ -377,11 +377,13 @@ class PreferencesPage(ttk.Frame):
 
     Instance Attributes:
     - app: Instance of CareerCompass class representing the application
+    - input_box: An image of the rounded input box
+    - input_boxes: A list of Tkinter entry widgets for user input
     """
 
     app: CareerCompass
     input_box: ImageTk
-    input_boxes: list
+    input_boxes: list[tk.Entry]
 
     def __init__(self, container_preferences: tk.Frame, app: CareerCompass) -> None:
         super().__init__(container_preferences)
