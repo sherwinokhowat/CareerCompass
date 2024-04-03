@@ -109,11 +109,15 @@ def normalize_pay(job1: Job, job2: Job) -> float:
     """
     if job1.job_details["pay_period"] == "HOURLY":
         estimated_salary1 = 40 * 52 * job1.job_details["pay"]
+    elif job1.job_details["pay_period"] == "MONTHLY":
+        estimated_salary1 = 12 * job1.job_details["pay"]
     else:
         estimated_salary1 = job1.job_details["pay"]
 
     if job2.job_details["pay_period"] == "HOURLY":
         estimated_salary2 = 40 * 52 * job2.job_details["pay"]
+    elif job2.job_details["pay_period"] == "MONTHLY":
+        estimated_salary2 = 12 * job2.job_details["pay"]
     else:
         estimated_salary2 = job2.job_details["pay"]
 
