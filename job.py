@@ -1,3 +1,20 @@
+"""
+CSC111 Winter 2024 Course Project 2: CareerCompass
+
+This Python module contains the class which represents
+each job posting.
+
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of the instructors
+and teaching assistants of CSC111 at the University of Toronto St. George campus.
+All forms of distribution of this code, whether as given or with any changes, are
+expressly prohibited. For more information on copyright of these files,
+please contact us through Github using the "contact" button within our application.
+
+This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+"""
+
 from typing import Any
 from random import randint
 from re import sub
@@ -114,6 +131,8 @@ class Job:
             return True
         elif self._check_keyword("full stack"):
             return True
+        else:
+            return False
 
     def _sanitize_description(self) -> None:
         """
@@ -180,3 +199,16 @@ class Job:
             decisions.append(0)
 
         return decisions
+
+
+if __name__ == "__main__":
+    import python_ta
+
+    # NOTES FOR PYTHON-TA:
+    # 1. R0912: Number of branches is due to the numerous preferences we ask the user. Keeping these in one function
+    #           allows for cleaner and more understandable code.
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'extra-imports': ["typing", "random", "re"],
+        'disable': ['R0912']
+    })

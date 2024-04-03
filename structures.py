@@ -1,3 +1,20 @@
+"""
+CSC111 Winter 2024 Course Project 2: CareerCompass
+
+This Python module contains the data structures necessary for
+our application to function including a decision tree and weighted graph.
+
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of the instructors
+and teaching assistants of CSC111 at the University of Toronto St. George campus.
+All forms of distribution of this code, whether as given or with any changes, are
+expressly prohibited. For more information on copyright of these files,
+please contact us through Github using the "contact" button within our application.
+
+This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+"""
+
 from __future__ import annotations
 from typing import Optional
 from random import sample
@@ -234,17 +251,23 @@ def load_graph_and_tree() -> tuple[WeightedGraph, DecisionTree]:
     g = WeightedGraph()
     jobs = load_jobs_csv()
     new_tree = DecisionTree()
-    print("bye")
     for job in jobs:
         g.add_vertex(job)
         new_tree.insert(job)
-    print("hi")
     count = 0
     for job1 in jobs:  # no optimization available :(
         count += 1
-        print(count)
         for job2 in jobs:
             if job1 != job2:
                 g.add_edge(job1, job2)
-    print("hooray")
     return g, new_tree
+
+
+if __name__ == "__main__":
+    import python_ta
+
+    # NOTES FOR PYTHON-TA:
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'extra-imports': ["typing", "random", "utility", "job"]
+    })

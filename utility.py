@@ -1,7 +1,24 @@
+"""
+CSC111 Winter 2024 Course Project 2: CareerCompass
+
+This Python module contains utility functions necessary
+for the functionality of our application including computation
+and reading/writing CSV functions.
+
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of the instructors
+and teaching assistants of CSC111 at the University of Toronto St. George campus.
+All forms of distribution of this code, whether as given or with any changes, are
+expressly prohibited. For more information on copyright of these files,
+please contact us through Github using the "contact" button within our application.
+
+This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+"""
 from typing import Optional, Any
-from job import Job
 from math import e, acos, sin, cos, pi
 import csv
+from job import Job
 
 # ====================================================================================
 # Computation
@@ -15,7 +32,6 @@ def sigmoid(x: float, scale_factor: Optional[int] = 1) -> float:
     try:
         return scale_factor / (1 + e ** (-x))
     except ValueError:
-        print(x)
         return 0
 
 
@@ -61,11 +77,6 @@ def normalize_distance(job1: Job, job2: Job) -> float:
     or near 0 if the distance approaches 'larger' values.
 
     The function used is f(d) =  2/(1 + e^(2d)
-
-    >>> normalize_distance(0.0)
-    1.000
-    >>> normalize_distance(10000.0)
-    0.000
     """
     coords1 = (job1.job_details["latitutde"], job1.job_details["longitude"])
     coords2 = (job2.job_details["latitutde"], job2.job_details["longitude"])
@@ -241,3 +252,15 @@ def sanitize_details(job_details: list[Any]) -> None:
             job_details[i] = (
                 field.replace("\u2010", "-").replace("\n", " ").replace("\r", " ")
             )
+
+
+if __name__ == "__main__":
+    import python_ta
+
+    # NOTES FOR PYTHON-TA:
+    # 1. E9998 (Forbidden-IO-Function): Necessary for reading and writing to our CSV file
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'extra-imports': ["typing", "job", "math", "csv"],
+        'disable': ['E9998']
+    })
