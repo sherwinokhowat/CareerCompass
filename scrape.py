@@ -225,6 +225,8 @@ def fetch_jobs_us(cursor: str) -> dict:
     response = requests.post(URL, headers=HEADERS, data=job_list_query)
     if response:
         return response.json()[1]["data"]["jobListings"]
+    elif response.status_code == 502:
+        return fetch_jobs_ca(cursor)
     else:
         print("\n\n\n")
         print(f"HTTP Response: {response.status_code}\n Try again later.")
@@ -247,6 +249,8 @@ def fetch_jobs_ca(cursor: str) -> dict:
     response = requests.post(URL, headers=HEADERS, data=job_list_query)
     if response:
         return response.json()[0]["data"]["jobListings"]
+    elif response.status_code == 502:
+        return fetch_jobs_ca(cursor)
     else:
         print("\n\n\n")
         print(f"HTTP Response: {response.status_code}\n Try again later.")

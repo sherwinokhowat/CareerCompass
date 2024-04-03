@@ -107,7 +107,6 @@ def normalize_pay(job1: Job, job2: Job) -> float:
     Returns a normalized similarity value based on <job1> and <job2> pay
     similarity.
     """
-
     var = abs((job1.get_annual_pay() - job2.get_annual_pay())) / 1000.0
     return sigmoid(x=(-0.75 * var), scale_factor=2)
 
@@ -158,14 +157,13 @@ def similarity_calculation(job1: Job, job2: Job) -> float:
 # ====================================================================================
 
 
-def load_jobs_csv() -> list[Job]:
+def load_jobs_csv() -> set[Job]:
     """
-    Returns a list of Job instances representing every job in <jobs.csv>.
+    Returns a set of Job instances representing every job in <jobs.csv>.
 
-    Note that duplicates are filtered out as a precautionary measure!
+    Note that there are no duplicates in the CSV file!
     """
-    ids = set()
-    jobs = []
+    jobs = set()
     with open("jobs.csv", "r", newline="", encoding="utf-8") as csvfile:
         job_reader = csv.reader(csvfile)
         next(job_reader)
@@ -187,9 +185,7 @@ def load_jobs_csv() -> list[Job]:
                     "job_id": row[12],
                     "full_desc": row[13],
                 }
-                if job_details["job_id"] not in ids:
-                    jobs.append(Job(job_details))
-                    ids.add(job_details["job_id"])
+                jobs.add(Job(job_details))
             except ValueError:
                 continue
     return jobs

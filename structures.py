@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Optional
+from random import sample
 from utility import similarity_calculation, load_jobs_csv
 from job import Job
 
@@ -87,11 +88,18 @@ class WeightedGraph:
 
         return v1.neighbours.get(v2, 0)
 
-    def get_similar_jobs(self, job: Job, limit: Optional[int] = 5) -> list[Job]:
+    def get_similar_jobs(
+        self, job: Job, limit: Optional[int] = 5, offset: Optional[int] = 10
+    ) -> list[Job]:
         """
         Returns the <limit> jobs with the highest similarity score to <job>.
+
+        The <offset>  offset introduced to introduce a 'random'
+        aspect to the <limit> similar jobs retrieved.
         """
-        if job not in self._vertices:
+        if (offset + limit) > len(self):
+            raise ValueError("Limit / Offset are too high!")
+        elif job not in self._vertices:
             raise ValueError("Job does not exist in this <WeightedGraph> instance!")
 
         job_vertex = self._vertices[job]
@@ -99,7 +107,11 @@ class WeightedGraph:
             job_vertex.neighbours.items(), key=lambda item: item[1], reverse=True
         )
 
-        return [neighbour_vertex.item for neighbour_vertex, _ in sorted_jobs[:limit]]
+        similar_jobs = [
+            neighbour_vertex.item for neighbour_vertex, _ in sorted_jobs[: limit + 10]
+        ]
+
+        return sample(similar_jobs, limit)
 
     def get_vertices(self) -> dict[Job, _WeightedVertex]:
         """
