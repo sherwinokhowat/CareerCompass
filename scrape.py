@@ -325,12 +325,8 @@ if __name__ == "__main__":
     # 4. R0914 (Too-Many-Locals): Necessary to save all data we scraped and to do it in one function
     #                             for easier readability and cleanliness.
 
-    # NOTE: If you plan to use scrape(), jobs.csv must be closed until the scraper finishes, in order
-    # to avoid inherent bugs related to csv.writer() and file locking. You may try
-    # to open jobs.csv around 10 seconds after you run scrape(), if you wish to watch jobs.csv
-    # being filled out.
-    # Uncomment the following line to run the scraper and be sure to comment out PythonTA.
-    scrape()
+    # NOTE: To avoid inherent bugs related to csv.writer() and file locking, do not have jobs.csv open while
+    # running this.
 
     python_ta.check_all(
         config={

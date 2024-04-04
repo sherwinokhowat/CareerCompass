@@ -52,7 +52,7 @@ class CareerCompass:
     user_name: str | None
     preferences: list[str]
     job_postings: list[Job]
-    images: dict[str, Any]
+    images: dict[str, ImageTk.PhotoImage]
     structs: tuple[structures.WeightedGraph, structures.DecisionTree]
     facts: dict[str, int | str]
     container: tk.Frame
