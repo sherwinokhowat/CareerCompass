@@ -1,3 +1,4 @@
 aiohttp==3.9.3
 Pillow==10.3.0
+python_ta==2.7.0
 Requests==2.31.0
