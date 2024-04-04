@@ -1,21 +1,31 @@
 """
 CSC111 Winter 2024 Course Project 2: CareerCompass
 
-This Python module is the GUI
+This Python module contains the graphical user interface
+for the interactive portion of our application.
 
-This file is Copyright (c) 2024 Kush Gandhi
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of the instructors
+and teaching assistants of CSC111 at the University of Toronto St. George campus.
+All forms of distribution of this code, whether as given or with any changes, are
+expressly prohibited. For more information on copyright of these files,
+please contact us through Github using the "contact" button within our application.
+
+This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
 """
 
 from pathlib import Path
 import webbrowser
 import tkinter as tk
-from job import Job
-from structures import load_graph_and_tree
 from tkinter import ttk, messagebox
 from PIL import ImageTk, Image
+import structures
+from job import Job
+from structures import load_graph_and_tree
 
 # Get File Directory
-folder = Path(__file__).absolute().parent
+FOLDER = Path(__file__).absolute().parent
 
 
 ##############################################
@@ -27,25 +37,27 @@ class CareerCompass:
     """
     Class representing the CareerCompass application
 
-    NOTE: Below are only the instance attributes EXCLUDING tkinter widgets.
-
     Instance Attributes:
     - user_name: the name of the user
     - preferences: a dictionary containing the preferences of the user
     - job_postings: a list containing the job postings
-
-    Representation Invariants:
-    - user_name.length() <= 9
-    - preferences.length() == 7
-    - job_postings.length() <= 5
-
+    - images: a dict containing the images needed for the GUI
+    - structs: a tuple containing both the decision tree and weighted graph
+    - facts: a dict mapping a string to a int or string for the facts on the home page
+    - container: a tk.Frame object needed to for the functionality of the GUI
+    - pages: a dictionary mapping the page name to an instance of that class
     """
 
     user_name: str | None
     preferences: list[str]
     job_postings: list[Job]
+    images: dict[str, ImageTk.PhotoImage]
+    structs: tuple[structures.WeightedGraph, structures.DecisionTree]
+    facts: dict[str, int | str]
+    container: tk.Frame
+    pages: dict
 
-    def __init__(self, root):
+    def __init__(self, root: tk.Tk) -> None:
         """
         Initialize the CareerCompass application
         """
@@ -57,48 +69,48 @@ class CareerCompass:
         # Dictionary to store all the pages
         self.pages = {}
 
-        # Load all the images
+        # Loading all images
         self.images = {
-            "line": ImageTk.PhotoImage(file=folder / "assets" / "Line.png"),
+            "line": ImageTk.PhotoImage(file=FOLDER / "assets" / "Line.png"),
             "compass_emoji": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "CompassEmoji.png")
+                Image.open(FOLDER / "assets" / "CompassEmoji.png")
             ),
             "hbutton": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "HomeButton.png")
+                Image.open(FOLDER / "assets" / "HomeButton.png")
             ),
             "pbutton": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "PreferencesButton.png")
+                Image.open(FOLDER / "assets" / "PreferencesButton.png")
             ),
             "cbutton": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "ContactButton.png")
+                Image.open(FOLDER / "assets" / "ContactButton.png")
             ),
             "rs_image": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "Rocket.png")
+                Image.open(FOLDER / "assets" / "Rocket.png")
             ),
             "name_entry_image": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "NameEntryBox.png")
+                Image.open(FOLDER / "assets" / "NameEntryBox.png")
             ),
             "start_button_image": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "StartButton.png")
+                Image.open(FOLDER / "assets" / "StartButton.png")
             ),
             "gradient_background": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "FactBackground.png")
+                Image.open(FOLDER / "assets" / "FactBackground.png")
             ),
             "input_box": ImageTk.PhotoImage(
-                file=folder / "assets" / "QuestionareEntryBox.png"
+                file=FOLDER / "assets" / "QuestionareEntryBox.png"
             ),
             "find_jobs": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "FindJobsButton.png")
+                Image.open(FOLDER / "assets" / "FindJobsButton.png")
             ),
             "job_posting_img": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "JobPostingBackground.png")
+                Image.open(FOLDER / "assets" / "JobPostingBackground.png")
             ),
-            "star_img": ImageTk.PhotoImage(Image.open(folder / "assets" / "Star.png")),
+            "star_img": ImageTk.PhotoImage(Image.open(FOLDER / "assets" / "Star.png")),
             "start_over_button_image": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "StartOverButton.png")
+                Image.open(FOLDER / "assets" / "StartOverButton.png")
             ),
             "URLButton": ImageTk.PhotoImage(
-                Image.open(folder / "assets" / "URLButton.png")
+                Image.open(FOLDER / "assets" / "URLButton.png")
             ),
         }
 
@@ -107,34 +119,39 @@ class CareerCompass:
         self.preferences = []
         self.job_postings = []
 
-        # Load Decision Tree and Graph
-        self.graph, self.tree = load_graph_and_tree()
+        # Loading decision tree and weighted graph
+        self.structs = load_graph_and_tree()
 
         # Getting size of data set
-        self.num_jobs = len(self.graph)
-        self.avg_salary = str(self.graph.get_average_salary())
-        print(len(self.avg_salary))
-        if len(self.avg_salary) == 5:
-            self.avg_salary = self.avg_salary[:2] + "," + self.avg_salary[2:]
-        elif len(self.avg_salary) == 6:
-            self.avg_salary = self.avg_salary[:3] + "," + self.avg_salary[3:]
-        self.avg_salary = "$" + self.avg_salary
+        self.facts = {
+            "num_jobs": len(self.structs[0]),
+            "avg_salary": str(self.structs[0].get_average_salary()),
+        }
+        if len(self.facts["avg_salary"]) == 5:
+            self.facts["avg_salary"] = (
+                self.facts["avg_salary"][:2] + "," + self.facts["avg_salary"][2:]
+            )
+        elif len(self.facts["avg_salary"]) == 6:
+            self.facts["avg_salary"] = (
+                self.facts["avg_salary"][:3] + "," + self.facts["avg_salary"][3:]
+            )
+        self.facts["avg_salary"] = "$" + self.facts["avg_salary"]
 
         # Show the HomePage
         self.show_pages("HomePage")
 
-    def show_pages(self, target_page):
+    def show_pages(self, target_page: str) -> None:
         """
         Shows the target page and destroys the current page
         """
 
-        # Destroying Current Page
+        # Destroying current page
         if self.pages:
             current_page = next(iter(self.pages.values()))
             current_page.destroy()
             self.pages.clear()
 
-        # Create the new page and store it in the dictionary
+        # Creating new page and storing it in the pages dict
         new_page = None
         if target_page == "HomePage":
             new_page = HomePage(self.container, self)
@@ -146,10 +163,7 @@ class CareerCompass:
         self.pages[target_page] = new_page
         new_page.pack(fill="both", expand=True)
 
-    def reset_job_postings(self):
-        self.job_postings.clear()
-
-    def start_over(self):
+    def start_over(self) -> None:
         """
         Resets the application
         """
@@ -171,12 +185,14 @@ class HomePage(ttk.Frame):
 
     Instance Attributes:
     - app: Instance of CareerCompass class representing the application
+    - name_entry: A tkinter widget for user input
 
     """
 
     app: CareerCompass
+    name_entry: tk.Entry
 
-    def __init__(self, container_home, app):
+    def __init__(self, container_home: tk.Frame, app: CareerCompass) -> None:
         super().__init__(container_home)
 
         self.app = app
@@ -235,7 +251,7 @@ class HomePage(ttk.Frame):
         preferences_button.place(x=46.0, y=268.0, width=180.0, height=40.0)
 
         # Contact Button
-        contact_url = "https://github.com/sherwinokhowat/Internship-Finder"
+        contact_url = "https://github.com/sherwinokhowat/CareerCompass"
         contact_button = tk.Button(
             self,
             image=self.app.images["cbutton"],
@@ -284,7 +300,7 @@ class HomePage(ttk.Frame):
             image=self.app.images["start_button_image"],
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: self.start_button_command(),
+            command=self.start_button_command,
             relief="flat",
         )
         start_button.place(x=562.0, y=254.0, width=147.0, height=42.0)
@@ -303,7 +319,7 @@ class HomePage(ttk.Frame):
             465.0,
             470.0,
             anchor="center",
-            text=self.app.num_jobs,
+            text=self.app.facts["num_jobs"],
             fill="#FFFFFF",
             font=("Karma Bold", 64 * -1),
         )
@@ -322,7 +338,7 @@ class HomePage(ttk.Frame):
             800.0,
             470.0,
             anchor="center",
-            text=self.app.avg_salary,
+            text=self.app.facts["avg_salary"],
             fill="#FFFFFF",
             font=("Karma Bold", 64 * -1),
         )
@@ -330,7 +346,7 @@ class HomePage(ttk.Frame):
         # Packing the canvas
         canvas.pack(fill="both", expand=True)
 
-    def start_button_command(self):
+    def start_button_command(self) -> None:
         """
         Receives the name from the entry box and proceeds to the next page upon clicking the start button
         """
@@ -342,7 +358,7 @@ class HomePage(ttk.Frame):
         if self.app.user_name is not None:
             self.app.show_pages("PreferencesPage")
 
-    def update_name(self):
+    def update_name(self) -> None:
         """
         Updates the name of the user from the entry box
         """
@@ -368,11 +384,15 @@ class PreferencesPage(ttk.Frame):
 
     Instance Attributes:
     - app: Instance of CareerCompass class representing the application
+    - input_box: An image of the rounded input box
+    - input_boxes: A list of Tkinter entry widgets for user input
     """
 
     app: CareerCompass
+    input_box: ImageTk
+    input_boxes: list[tk.Entry]
 
-    def __init__(self, container_preferences, app):
+    def __init__(self, container_preferences: tk.Frame, app: CareerCompass) -> None:
         super().__init__(container_preferences)
 
         self.app = app
@@ -431,7 +451,7 @@ class PreferencesPage(ttk.Frame):
         preferences_button.place(x=46.0, y=268.0, width=180.0, height=40.0)
 
         # Contact Button
-        contact_url = "https://github.com/sherwinokhowat/Internship-Finder"
+        contact_url = "https://github.com/sherwinokhowat/CareerCompass"
         contact_button = tk.Button(
             self,
             image=self.app.images["cbutton"],
@@ -498,7 +518,7 @@ class PreferencesPage(ttk.Frame):
             image=self.app.images["find_jobs"],
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: self.find_jobs_button_command(),
+            command=self.find_jobs_button_command,
             relief="flat",
         )
         find_jobs_button.place(x=498.0, y=659.0, width=276.0, height=71.0)
@@ -506,7 +526,7 @@ class PreferencesPage(ttk.Frame):
         # Packing the canvas
         canvas.pack(fill="both", expand=True)
 
-    def find_jobs_button_command(self):
+    def find_jobs_button_command(self) -> None:
         """
         Receives the preferences from the entry boxes and converts them to the correct format for tree traversal.
         The function then proceeds to the next page upon clicking the find jobs button with the updated job postings.
@@ -526,7 +546,7 @@ class PreferencesPage(ttk.Frame):
                     new_preferences.append(2)
 
             # Getting Job Postings
-            self.app.job_postings = self.app.tree.get_jobs(new_preferences)
+            self.app.job_postings = self.app.structs[1].get_jobs(new_preferences)
 
             # Creating the job postings
             self.app.show_pages("JobsPage")
@@ -572,7 +592,7 @@ class JobsPage(ttk.Frame):
 
     app: CareerCompass
 
-    def __init__(self, container_jobs, app):
+    def __init__(self, container_jobs: tk.Frame, app: CareerCompass) -> None:
         super().__init__(container_jobs)
 
         self.app = app
@@ -632,7 +652,7 @@ class JobsPage(ttk.Frame):
         preferences_button.place(x=46.0, y=268.0, width=180, height=40.0)
 
         # Contact Button
-        contact_url = "https://github.com/sherwinokhowat/Internship-Finder"
+        contact_url = "https://github.com/sherwinokhowat/CareerCompass"
         contact_button = tk.Button(
             self,
             image=self.app.images["cbutton"],
@@ -762,7 +782,7 @@ class JobsPage(ttk.Frame):
             image=self.app.images["start_over_button_image"],
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: self.start_over_button_command(),
+            command=self.start_over_button_command,
             relief="flat",
         )
         start_over_button.place(x=515.0, y=676.0, width=241.0, height=65.0)
@@ -770,18 +790,18 @@ class JobsPage(ttk.Frame):
         # Packing the canvas
         canvas.pack(fill="both", expand=True)
 
-    def star_button_command(self, job: Job):
+    def star_button_command(self, job: Job) -> None:
         """
         Receives the job from the star button and proceeds to the next page upon clicking the star button
         """
 
         # Getting similar jobs
-        self.app.job_postings = self.app.graph.get_similar_jobs(job)
+        self.app.job_postings = self.app.structs[0].get_similar_jobs(job)
 
         # Refreshing Job Page
         self.app.show_pages("JobsPage")
 
-    def open_url(self, url: str):
+    def open_url(self, url: str) -> None:
         """
         Opens the URL in the browser
         """
@@ -813,8 +833,6 @@ class JobsPage(ttk.Frame):
         if len(lines) < 2:
             lines.append(" ".join(current_line))
 
-        formatted_description = ""
-
         # Return the formatted description without the brackets and quotes
         if "..." not in lines[-1]:
             formatted_description = ("\n".join(lines))[2:-2] + "..."
@@ -823,7 +841,7 @@ class JobsPage(ttk.Frame):
 
         return formatted_description
 
-    def start_over_button_command(self):
+    def start_over_button_command(self) -> None:
         """
         Resets the application and proceeds to the home page upon clicking the start over button
         """
@@ -832,8 +850,10 @@ class JobsPage(ttk.Frame):
         self.app.show_pages("HomePage")
 
 
-def main():
-    # Create the main window
+def gui() -> None:
+    """
+    Creates the main window for the application
+    """
     root = tk.Tk()
     root.title("CareerCompass")
     root.geometry("1000x750")
@@ -846,6 +866,24 @@ def main():
     root.mainloop()
 
 
-# Run the main function
 if __name__ == "__main__":
-    main()
+    import python_ta
+
+    # NOTES FOR PYTHON-TA:
+    # 1. R0902 (too-many-instance-attributes): All the current attributes(8) are necessary and cannot be reduced
+    # 2. R0914 (too-many-locals): This is due to Tkinter widgets which are all necessary
+    # 3. R0915 (too-many-statements): This is also due to Tkinter widgets which need to be within the constructor
+    python_ta.check_all(
+        config={
+            "max-line-length": 120,
+            "extra-imports": [
+                "tkinter",
+                "PIL",
+                "pathlib",
+                "webbrowser",
+                "structures",
+                "job",
+            ],
+            "disable": ["R0902", "R0914", "R0915"],
+        }
+    )

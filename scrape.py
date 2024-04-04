@@ -316,10 +316,10 @@ async def fetch_job_details(session: aiohttp.ClientSession, job_id: int) -> dict
 # Main Function
 # ====================================================================================
 if __name__ == "__main__":
+    scrape()
     import python_ta
 
     # NOTES FOR PYTHON-TA:
-    # 1. DO NOT RUN THE SCAPER WITH PYTHON-TA ENABLED
     # 2. E9998 (Forbidden-IO-Function): Necessary as to communicate scraping status, incase of ratelimiting.
     # 3. C0301 (Line-Too-Long): Necessary to query Glassdoor's GraphQL.
     # 4. R0914 (Too-Many-Locals): Necessary to save all data we scraped and to do it in one function

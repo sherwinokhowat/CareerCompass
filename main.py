@@ -16,13 +16,20 @@ This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi
 """
 
 from gui import gui
+from scrape import scrape
 
 
 def career_compass() -> None:
     """
     Running the application
     """
-
+    # NOTE: to test the scraper, you may uncomment the following line. However, do
+    # note that the scraper can take upwards to 5-10 minutes, so be prepared lol. Also,
+    # the scraper overwrites the current jobs.csv file, so create a copy if  you wish
+    # to keep the preloaded dataset prior the running the scraper. Also, please do not
+    # have jobs.csv open for at least 10 seconds after the scraper is intially run to
+    # prevent any file locking issues (csv may not write to it otherwise).
+    # scrape()
     gui()
 
 

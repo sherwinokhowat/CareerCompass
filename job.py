@@ -26,6 +26,8 @@ class Job:
 
     Instance Attributes:
     - job_details: a dictionary representing this Job instance's details.
+    - decisions: an ordered sequence of an integers representing the path of questions
+    which this job instance traverses the decision tree.
 
     Representation Invariants:
     - 'job_title' in self.job_details
@@ -70,7 +72,7 @@ class Job:
         - 'full_desc' in job_details
         """
         self.job_details = job_details
-        self.decisions = self._get_decision_bools()
+        self.decisions = self._get_decision_decisions()
         self._sanitize_description()
 
     def __str__(self) -> str:
@@ -137,21 +139,23 @@ class Job:
     def _sanitize_description(self) -> None:
         """
         Sanitizes self.job_details['fragmented_desc'], by removing
-        all html tags using regular expression query.
+        all html tags using a regular expression query.
         """
         desc = self.job_details["fragmented_desc"]
         clean_desc = sub("<[^<]+?>", "", desc)
         self.job_details["fragmented_desc"] = clean_desc
 
-    def _get_decision_bools(self) -> list[int]:
+    def _get_decision_decisions(self) -> list[int]:
         """
-        Canada, United States, or Don't Care? DONE
-        Remote, Not Remote, or Don't Care? DONE
-        Frontend, Backend, or Don't Care? DONE
-        Would you like a rating score above 3 (Yes/No/Don't Care)? DONE
-        Are you skilled at Python? (Yes/No/Don't Care) DONE
-        Are you skilled at Java? (Yes/No/Don't Care) DONE
-        Are you skilled at C/C++? (Yes/No/Don't Care) DONE
+        Returns a list of integers representing this job instances
+        responses to the following questions:
+        1. Canada or United States (1 or 0)
+        2. Remote or Not Remote (1 or 0)
+        3. Frontend or Backend (1 or 0)
+        4. Rating >= 3 or Rating < 3 (1 or 0)
+        5. Python or No Python (1 or 0)
+        6. Java or No Java (1 or 0)
+        7. C++ or No C++ (1 or 0)
         """
         decisions = []
         if self.job_details["country"] == "United States":
@@ -207,8 +211,10 @@ if __name__ == "__main__":
     # NOTES FOR PYTHON-TA:
     # 1. R0912: Number of branches is due to the numerous preferences we ask the user. Keeping these in one function
     #           allows for cleaner and more understandable code.
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'extra-imports': ["typing", "random", "re"],
-        'disable': ['R0912']
-    })
+    python_ta.check_all(
+        config={
+            "max-line-length": 120,
+            "extra-imports": ["typing", "random", "re"],
+            "disable": ["R0912"],
+        }
+    )
