@@ -29,17 +29,18 @@ def career_compass() -> None:
     # to keep the preloaded dataset prior the running the scraper. Also, please do not
     # have jobs.csv open for at least 10 seconds after the scraper is intially run to
     # prevent any file locking issues (csv may not write to it otherwise).
+
     # scrape()
     gui()
 
 
 if __name__ == "__main__":
-    career_compass()
     import python_ta
 
+    career_compass()
     python_ta.check_all(
         config={
             "max-line-length": 120,
-            "extra-imports": ["gui"],
+            "extra-imports": ["gui, scrape"],
         }
     )
