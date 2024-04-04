@@ -18,7 +18,6 @@ This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi
 from pathlib import Path
 import webbrowser
 import tkinter as tk
-from typing import Any
 from tkinter import ttk, messagebox
 from PIL import ImageTk, Image
 import structures
