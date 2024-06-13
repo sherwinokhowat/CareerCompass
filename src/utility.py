@@ -19,7 +19,7 @@ This file is Copyright (c) 2024 Sherwin Okhowat, Kush Gandhi, David Cen, Tony Qi
 from typing import Optional, Any
 from math import e, acos, sin, cos, pi
 import csv
-from job import Job
+from src.job import Job
 
 # ====================================================================================
 # Computation

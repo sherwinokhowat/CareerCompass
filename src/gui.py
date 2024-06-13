@@ -20,9 +20,9 @@ import webbrowser
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import ImageTk, Image
-import structures
-from job import Job
-from structures import load_graph_and_tree
+import src.structures as structures
+from src.job import Job
+from src.structures import load_graph_and_tree
 
 # Get File Directory
 FOLDER = Path(__file__).absolute().parent

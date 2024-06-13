@@ -24,7 +24,7 @@ import asyncio
 import json
 import requests
 import aiohttp
-from utility import clear_csv, write_csv, sanitize_details
+from src.utility import clear_csv, write_csv, sanitize_details
 
 # ====================================================================================
 # Scraper

@@ -18,8 +18,8 @@ This file is Copyright (c) 2024 Sherwin Okhowat, Kush Gandhi, David Cen, Tony Qi
 from __future__ import annotations
 from typing import Optional
 from random import sample
-from utility import similarity_calculation, load_jobs_csv
-from job import Job
+from src.utility import similarity_calculation, load_jobs_csv
+from src.job import Job
 
 
 # ====================================================================================

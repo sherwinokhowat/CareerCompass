@@ -12,7 +12,7 @@ All forms of distribution of this code, whether as given or with any changes, ar
 expressly prohibited. For more information on copyright of these files,
 please contact us through Github using the "contact" button within our application.
 
-This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
+This file is Copyright (c) 2024 Sherwin Okhowat, Kush Gandhi, David Cen, Tony Qi.
 """
 
 from typing import Any

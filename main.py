@@ -15,8 +15,8 @@ please contact us through Github using the "contact" button within our applicati
 This file is Copyright (c) 2024 Kush Gandhi, Sherwin Okhowat, David Cen, Tony Qi.
 """
 
-from gui import gui
-from scrape import scrape
+from src.gui import gui
+from src.scrape import scrape
 
 
 def career_compass() -> None:
