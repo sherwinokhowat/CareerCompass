@@ -158,7 +158,7 @@ def load_jobs_csv() -> set[Job]:
     Note that there are no duplicates in the CSV file!
     """
     jobs = set()
-    with open("jobs.csv", "r", newline="", encoding="utf-8") as csvfile:
+    with open("data/jobs.csv", "r", newline="", encoding="utf-8") as csvfile:
         job_reader = csv.reader(csvfile)
         next(job_reader)
         for row in job_reader:
@@ -203,7 +203,7 @@ def write_csv(file: str, job_details: list) -> None:
         writer.writerow(job_details)
 
 
-def clear_csv(file: str = "jobs.csv") -> None:
+def clear_csv(file: str = "data/jobs.csv") -> None:
     """
     Clears the csv file associted to <file> and writes formatted
     column names for a job posting csv as its first line.

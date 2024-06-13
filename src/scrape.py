@@ -278,7 +278,7 @@ async def process_job_listings(jobs: list[Any], ids: set[int]) -> None:
                 full_desc,
             ]
             sanitize_details(job_details)
-            write_csv("jobs.csv", job_details)
+            write_csv("data/jobs.csv", job_details)
 
 
 async def fetch_job_details(session: aiohttp.ClientSession, job_id: int) -> dict[Any]:
